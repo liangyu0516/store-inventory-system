@@ -1,8 +1,12 @@
 package com.example.service;
 
+import com.example.exception.ProductNotFoundException;
 import com.example.model.Product;
+import com.example.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.annotation.PostConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +15,9 @@ import java.util.List;
 public class ProductService {
 
     private List<Product> products = new ArrayList<>();
+
+    @Autowired
+    private ProductRepository productRepository;
 
     public ProductService() {
         products.add(new Product("Tux", 6.9, 100));
@@ -25,10 +32,17 @@ public class ProductService {
         products.add(new Product("Elephant", 20.0, 100));
     }
 
+    @PostConstruct
+    public void postConstructRoutine() {
+        for (Product product : products) {
+            productRepository.save(product);
+        }
+    }
+
     public Product getProduct(@PathVariable String productName) {
         return products.stream()
             .filter(product -> product.getName().equalsIgnoreCase(productName))
             .findFirst()
-            .orElse(null);
-    }
+            .orElseThrow(() -> new ProductNotFoundException("Product not found: " + productName));
+        }
 }

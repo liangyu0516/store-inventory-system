@@ -1,12 +1,27 @@
 package com.example.model;
 
-public class OrderInput {
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "orders")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String name;
     private int quantity;
 
-    public OrderInput(String name, int quantity) {
+    public Order() {
+    }
+
+    public Order(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {

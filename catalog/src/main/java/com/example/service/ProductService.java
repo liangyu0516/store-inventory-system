@@ -4,17 +4,17 @@ import com.example.exception.ProductNotFoundException;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.PostConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@Service
 public class ProductService {
 
-    private List<Product> products = new ArrayList<>();
+    private final List<Product> products = new ArrayList<>();
 
     @Autowired
     private ProductRepository productRepository;

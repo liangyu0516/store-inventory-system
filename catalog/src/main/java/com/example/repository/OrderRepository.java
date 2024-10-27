@@ -1,10 +1,9 @@
 package com.example.repository;
 
-import com.example.model.Product;
+import com.example.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
-    boolean existsByName(String name);
+public interface OrderRepository extends JpaRepository<Order, Long> {
 }

@@ -1,9 +1,8 @@
 package com.example.controller;
 
-import com.example.model.Order;
-import com.example.model.OrderNumber;
-import com.example.model.ApiResponse;
-import com.example.model.ErrorResponse;
+import com.example.exception.InsufficientStockException;
+import com.example.exception.ProductNotFoundException;
+import com.example.model.*;
 import com.example.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +20,16 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody Order order) {
-        Order savedOrder = orderService.createOrder(order);
-        ApiResponse<OrderNumber> response = new ApiResponse<>(new OrderNumber(savedOrder.getId()));
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        try {
+            Order savedOrder = orderService.createOrder(order);
+            ApiResponse<OrderNumber> response = new ApiResponse<>(new OrderNumber(savedOrder.getId()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (InsufficientStockException ex) {
+            ErrorResponse errorResponse = new ErrorResponse("Insufficient stock for product: " + order.getName());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+
+
     }
 
     @GetMapping("/{orderNumber}")

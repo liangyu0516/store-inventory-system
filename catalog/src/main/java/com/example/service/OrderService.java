@@ -17,10 +17,13 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private ProductRepository productRepository;
 
     public Order createOrder(Order order) throws InsufficientStockException {
-        Product product = productRepository.findByName(order.getName());
+        Product product = productService.getProduct(order.getName());
         if (product != null && product.getQuantity() >= order.getQuantity()) {
             product.setQuantity(product.getQuantity() - order.getQuantity());
             productRepository.save(product);

@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -44,5 +45,5 @@ public class ProductService {
             .filter(product -> product.getName().equalsIgnoreCase(productName))
             .findFirst()
             .orElseThrow(() -> new ProductNotFoundException("Product not found: " + productName));
-        }
+    }
 }

@@ -41,6 +41,7 @@ public class ProductService {
     }
 
     public Product getProduct(@PathVariable String productName) {
+        System.out.println(productName);
         return products.stream()
             .filter(product -> product.getName().equalsIgnoreCase(productName))
             .findFirst()

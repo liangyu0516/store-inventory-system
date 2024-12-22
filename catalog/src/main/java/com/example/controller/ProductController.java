@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.model.Product;
 import com.example.model.ApiResponse;
 import com.example.model.ErrorResponse;
+import com.example.model.ErrorWrapper;
 import com.example.service.ProductService;
 import com.example.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,9 @@ public class ProductController {
             ApiResponse<Product> response = new ApiResponse<>(product);
             return ResponseEntity.ok(response);
         } catch (ProductNotFoundException ex) {
-            ErrorResponse errorResponse = new ErrorResponse("Product not found: " + productName);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+            ErrorResponse errorResponse = new ErrorResponse(404, "Product not found: " + productName);
+            ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorWrapper);
         }
     }
 }

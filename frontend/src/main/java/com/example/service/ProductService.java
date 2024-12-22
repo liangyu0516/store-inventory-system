@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exception.ProductNotFoundException;
 import com.example.model.Product;
 import com.example.model.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -29,8 +32,14 @@ public class ProductService {
 
     public ApiResponse<Product> getProduct(@PathVariable String productName) {
         String getProductUrl = catalogServiceUrl + "products/" + productName;
-        String apiResponse = restTemplate.getForObject(getProductUrl, String.class);
-        ApiResponse<Product> responseEntity = restTemplate.getForObject(getProductUrl, ApiResponse.class);
-        return responseEntity;
+        try {
+            // Fetch the product from catalog service
+            return restTemplate.getForObject(getProductUrl, ApiResponse.class);
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new ProductNotFoundException("Product not found: " + productName); // Custom exception
+        } catch (RestClientException ex) {
+            // Handle other possible errors
+            throw new RuntimeException("Internal server error");
+        }
     }
 }

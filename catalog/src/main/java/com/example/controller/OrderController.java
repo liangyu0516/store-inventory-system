@@ -24,6 +24,10 @@ public class OrderController {
             Order savedOrder = orderService.createOrder(order);
             ApiResponse<OrderNumber> response = new ApiResponse<>(new OrderNumber(savedOrder.getId()));
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (ProductNotFoundException ex) {
+            ErrorResponse errorResponse = new ErrorResponse(404, ex.getMessage());
+            ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorWrapper);
         } catch (InsufficientStockException ex) {
             ErrorResponse errorResponse = new ErrorResponse(400, "Insufficient stock for product: " + order.getName());
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);

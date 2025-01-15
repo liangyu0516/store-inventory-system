@@ -44,6 +44,7 @@ public class OrderController {
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
             ApiResponse<Order> response = new ApiResponse<>(order);
+            System.out.println(response);
             return ResponseEntity.ok(response);
         } else {
             ErrorResponse errorResponse = new ErrorResponse(404, "Order not found: " + orderNumber);

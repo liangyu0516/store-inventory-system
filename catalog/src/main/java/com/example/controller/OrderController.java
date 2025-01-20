@@ -31,7 +31,11 @@ public class OrderController {
         } catch (InsufficientStockException ex) {
             ErrorResponse errorResponse = new ErrorResponse(400, "Insufficient stock for product: " + order.getName());
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorWrapper);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorWrapper);
+        } catch (Exception ex) {
+            ErrorResponse errorResponse = new ErrorResponse(500, ex.getMessage());
+            ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorWrapper);
         }
 
 

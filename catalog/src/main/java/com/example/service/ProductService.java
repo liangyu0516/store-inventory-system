@@ -4,9 +4,11 @@ import com.example.exception.ProductNotFoundException;
 import com.example.model.Product;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import jakarta.annotation.PostConstruct;
+import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class ProductService {
     }
 
     @PostConstruct
+    @Scheduled(fixedRate = 10000) // 10 seconds
     public void postConstructRoutine() {
         for (Product product : products) {
             productRepository.save(product);
@@ -42,9 +45,16 @@ public class ProductService {
 
     public Product getProduct(@PathVariable String productName) {
         System.out.println(productName);
-        return products.stream()
-            .filter(product -> product.getName().equalsIgnoreCase(productName))
-            .findFirst()
-            .orElseThrow(() -> new ProductNotFoundException("Product not found: " + productName));
+        try {
+            Product product = productRepository.findByName(productName);
+            return product;
+        } catch (RestClientException ex) {
+            // Handle other possible errors
+            throw new RuntimeException("Internal server error");
+        }
+//        return products.stream()
+//            .filter(product -> product.getName().equalsIgnoreCase(productName))
+//            .findFirst()
+//            .orElseThrow(() -> new ProductNotFoundException("Product not found: " + productName));
     }
 }

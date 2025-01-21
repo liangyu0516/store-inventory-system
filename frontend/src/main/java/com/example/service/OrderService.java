@@ -8,16 +8,11 @@ import com.example.model.Order;
 import com.example.model.OrderNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -27,13 +22,16 @@ public class OrderService {
     @Value("${catalog.service.url}")
     private String catalogServiceUrl;
 
+    @Value("${order.service.url}")
+    private String orderServiceUrl;
+
     @Autowired
     public OrderService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public ApiResponse<OrderNumber> createOrder(Order order) {
-        String postOrderUrl = catalogServiceUrl + "orders";
+        String postOrderUrl = orderServiceUrl + "orders";
         try {
             return restTemplate.postForObject(postOrderUrl, order, ApiResponse.class);
         } catch (HttpClientErrorException.NotFound ex) {
@@ -46,7 +44,7 @@ public class OrderService {
     }
 
     public ApiResponse<Order> getOrderById(@PathVariable Long orderNumber) {
-        String getOrderUrl = catalogServiceUrl + "orders/" + orderNumber;
+        String getOrderUrl = orderServiceUrl + "orders/" + orderNumber;
         try {
             // Fetch the order from catalog service
             return restTemplate.getForObject(getOrderUrl, ApiResponse.class);

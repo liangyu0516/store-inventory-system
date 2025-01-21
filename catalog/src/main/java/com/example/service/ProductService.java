@@ -44,17 +44,13 @@ public class ProductService {
     }
 
     public Product getProduct(@PathVariable String productName) {
-        System.out.println(productName);
         try {
-            Product product = productRepository.findByName(productName);
-            return product;
-        } catch (RestClientException ex) {
-            // Handle other possible errors
+            return productRepository.findByName(productName).orElseThrow(() -> new ProductNotFoundException("Product not found: " + productName));
+        } catch (ProductNotFoundException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            // Log and handle internal server errors
             throw new RuntimeException("Internal server error");
         }
-//        return products.stream()
-//            .filter(product -> product.getName().equalsIgnoreCase(productName))
-//            .findFirst()
-//            .orElseThrow(() -> new ProductNotFoundException("Product not found: " + productName));
     }
 }

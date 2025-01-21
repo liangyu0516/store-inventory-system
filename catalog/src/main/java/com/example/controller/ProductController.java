@@ -25,9 +25,14 @@ public class ProductController {
             ApiResponse<Product> response = new ApiResponse<>(product);
             return ResponseEntity.ok(response);
         } catch (ProductNotFoundException ex) {
-            ErrorResponse errorResponse = new ErrorResponse(404, "Product not found: " + productName);
+            ErrorResponse errorResponse = new ErrorResponse(404, ex.getMessage());
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorWrapper);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            ErrorResponse errorResponse = new ErrorResponse(500, ex.getMessage());
+            ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorWrapper);
         }
     }
 }

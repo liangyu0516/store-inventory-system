@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.exception.InsufficientStockException;
+import com.example.exception.OrderNotFoundException;
 import com.example.exception.ProductNotFoundException;
 import com.example.model.ApiResponse;
 import com.example.model.Order;
@@ -38,13 +39,22 @@ public class OrderService {
             }
         } catch (ProductNotFoundException ex) {
             throw new ProductNotFoundException(ex.getMessage()); // Custom exception
+        } catch (InsufficientStockException ex) {
+            throw new InsufficientStockException(ex.getMessage()); // Custom exception
         } catch (RestClientException ex) {
             // Handle other possible errors
             throw new RuntimeException("Internal server error");
         }
     }
 
-    public Optional<Order> getOrderById(Long orderNumber) {
-        return orderRepository.findById(orderNumber);
+    public Order getOrderById(Long orderNumber) {
+        try {
+            return orderRepository.findById(orderNumber).orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderNumber));
+        } catch (OrderNotFoundException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            // Log and handle internal server errors
+            throw new RuntimeException("Internal server error");
+        }
     }
 }

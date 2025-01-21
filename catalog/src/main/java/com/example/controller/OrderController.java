@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.exception.InsufficientStockException;
+import com.example.exception.OrderNotFoundException;
 import com.example.exception.ProductNotFoundException;
 import com.example.model.*;
 import com.example.service.OrderService;
@@ -29,7 +30,7 @@ public class OrderController {
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorWrapper);
         } catch (InsufficientStockException ex) {
-            ErrorResponse errorResponse = new ErrorResponse(400, "Insufficient stock for product: " + order.getName());
+            ErrorResponse errorResponse = new ErrorResponse(400, ex.getMessage());
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorWrapper);
         } catch (Exception ex) {
@@ -37,23 +38,22 @@ public class OrderController {
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorWrapper);
         }
-
-
     }
 
     @GetMapping("/{orderNumber}")
     public ResponseEntity<?> getOrder(@PathVariable Long orderNumber) {
-        Optional<Order> orderOptional = orderService.getOrderById(orderNumber);
-
-        if (orderOptional.isPresent()) {
-            Order order = orderOptional.get();
+        try {
+            Order order = orderService.getOrderById(orderNumber);
             ApiResponse<Order> response = new ApiResponse<>(order);
-            System.out.println(response);
             return ResponseEntity.ok(response);
-        } else {
-            ErrorResponse errorResponse = new ErrorResponse(404, "Order not found: " + orderNumber);
+        } catch (OrderNotFoundException ex) {
+            ErrorResponse errorResponse = new ErrorResponse(404, ex.getMessage());
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorWrapper);
+        } catch (Exception ex) {
+            ErrorResponse errorResponse = new ErrorResponse(500, ex.getMessage());
+            ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorWrapper);
         }
     }
 }

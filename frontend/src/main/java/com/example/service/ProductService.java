@@ -37,8 +37,9 @@ public class ProductService {
             return restTemplate.getForObject(getProductUrl, ApiResponse.class);
         } catch (HttpClientErrorException.NotFound ex) {
             throw new ProductNotFoundException("Product not found: " + productName); // Custom exception
-        } catch (RestClientException ex) {
+        } catch (Exception ex) {
             // Handle other possible errors
+            System.out.println(ex);
             throw new RuntimeException("Internal server error");
         }
     }

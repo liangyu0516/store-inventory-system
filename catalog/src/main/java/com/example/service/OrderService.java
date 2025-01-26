@@ -3,17 +3,14 @@ package com.example.service;
 import com.example.exception.InsufficientStockException;
 import com.example.exception.OrderNotFoundException;
 import com.example.exception.ProductNotFoundException;
-import com.example.model.ApiResponse;
 import com.example.model.Order;
 import com.example.model.Product;
 import com.example.repository.OrderRepository;
 import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -27,7 +24,7 @@ public class OrderService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Order createOrder(Order order) throws InsufficientStockException {
+    public Order createOrder(Order order) {
         try {
             Product product = productService.getProduct(order.getName());
             if (product != null && product.getQuantity() >= order.getQuantity()) {

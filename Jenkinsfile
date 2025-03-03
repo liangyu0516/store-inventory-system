@@ -40,13 +40,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            echo 'All tests successed!'
-        }
-        failure {
-            echo 'One or more tests failed!'
-        }
-    }
 }

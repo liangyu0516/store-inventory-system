@@ -36,7 +36,7 @@ public class ProductController {
         } catch (Exception ex) {
             ErrorResponse errorResponse = new ErrorResponse(500, ex.getMessage());
             ErrorWrapper errorWrapper = new ErrorWrapper(errorResponse);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorWrapper);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorWrapper);
         }
     }
 }

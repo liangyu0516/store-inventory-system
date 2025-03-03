@@ -12,10 +12,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 public class ProductService {
@@ -37,9 +33,7 @@ public class ProductService {
             return restTemplate.getForObject(getProductUrl, ApiResponse.class);
         } catch (HttpClientErrorException.NotFound ex) {
             throw new ProductNotFoundException("Product not found: " + productName); // Custom exception
-        } catch (Exception ex) {
-            // Handle other possible errors
-            System.out.println(ex);
+        } catch (RestClientException ex) {
             throw new RuntimeException("Internal server error");
         }
     }
